@@ -1,0 +1,98 @@
+##https://help.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#contexts
+##https://octokit.github.io/rest.js/v18
+##https://github.com/actions/toolkit
+##https://help.github.com/en/actions/reference/events-that-trigger-workflows
+##https://github.com/sdras/awesome-actions
+##https://help.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#job-status-check-functions
+name: ReplyIssueComment
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+          
+  build:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == github.repository_owner }}
+    steps:
+    - name: Do something
+      if: ${{ success() }}
+      env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+      run: |
+        echo "$GITHUB_CONTEXT"
+        
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.ref }}
+        
+    - name: Set config from issue_comment
+      uses: actions/github-script@v2
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          console.log(context.payload.issue);
+          // 将issue内容写入config.json
+          const comment = context.payload.comment.body;
+          let fs = require("fs");
+          fs.unlinkSync('config.json');
+          let ws = fs.createWriteStream('config.json');
+          ws.write(comment);
+          ws.end();
+    
+    
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests==2.22.0
+    
+    - name: Run tasks
+      run: |
+        python main.py
+        
+    - name: Create release
+      uses: actions/github-script@v3
+      with:
+        script: |
+            const { owner: currentOwner, repo: currentRepo } = context.repo;
+            const fs = require('fs');
+            const data = await fs.promises.readFile("config.json");
+            let config = JSON.parse(data);
+            let body = '';
+            config['tasks'].forEach(function(task){
+                body += task['file_name'] + '\n'
+            }); 
+            console.log(body);
+            const createReleaseResponse = await github.repos.createRelease({
+              owner:            currentOwner,
+              repo:             currentRepo,
+              tag_name:         config['release_tag'],
+              name:             config['release_name'],
+              body:             body,
+              draft:            false,
+              prerelease:       false,
+              target_commitish: context.sha
+            });
+            const {
+              data: { id: releaseId, html_url: htmlUrl, upload_url: uploadUrl }
+            } = createReleaseResponse;
+            const assetPath = config["output"]
+            const assetName = config["output"]
+            const contentLength = filePath => fs.statSync(filePath).size;
+            const headers = { 'content-type': 'application/zip', 'content-length': contentLength(assetPath) };
+            const uploadAssetResponse = await github.repos.uploadReleaseAsset({
+              url:      uploadUrl,
+              headers:  headers,
+              name:     assetName,
+              file:     fs.readFileSync(assetPath)
+            });
+            return 'boki'
+        result-encoding: string
+          
+          
