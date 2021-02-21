@@ -10,12 +10,12 @@
         <br/> 美好的世界由我们创造!  
 </p>
 
-[ReadMe](https://github.com/ButterAndButterfly/GithubHost/blob/master/README.md)  [ReadMe中文版](https://github.com/ButterAndButterfly/GithubHost/blob/master/README_CN.md)
+[ReadMe](https://github.com/ButterAndButterfly/Help-me-download/blob/master/README.md)  [ReadMe中文版](https://github.com/ButterAndButterfly/Help-me-download/blob/master/README_CN.md)
 ## 功能
 让GitHub机器人帮忙代下载，然后发布到release附件。
 
 ## 如何配置
-```json
+```
 {
     // 下载的默认headers
     "headers":{

@@ -7,15 +7,15 @@
         <a href="https://github.com/ButterAndButterfly" target="_blank">ButterAndButterfly</a><br>
       </strong>  
         Butter, symbolizes Otaku; Butterfly, symbolizes the Great things. 
-        <br/> Let's earn a world full with fantasy!
+        <br/> Let's earn a world full of fantasy!
 </p>
 
-[ReadMe](https://github.com/ButterAndButterfly/GithubHost/blob/master/README.md)  [ReadMe中文版](https://github.com/ButterAndButterfly/GithubHost/blob/master/README_CN.md)
+[ReadMe](https://github.com/ButterAndButterfly/Help-me-download/blob/master/README.md)  [ReadMe中文版](https://github.com/ButterAndButterfly/Help-me-download/blob/master/README_CN.md)
 ## Fucntion
 Let the github robots download the things you want, and then push it to the release assets.
 
 ## How to config
-```json
+```
 {
     // default headers to download
     "headers":{
